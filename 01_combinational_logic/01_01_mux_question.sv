@@ -20,6 +20,9 @@ module mux_4_1
 
   // TODO
 
+  assign y = sel[1] ? (sel[0] ? d3 : d2) :
+                      (sel[0] ? d1 : d0);
+
   // Using code for mux_2_1 as an example,
   // write code for 4:1 mux using "?:" operator
 

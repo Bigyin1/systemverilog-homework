@@ -19,6 +19,11 @@ module mux_4_1
 );
 
   // TODO
+  logic [3:0] low, high;
+
+  mux_2_1 lowmux(d0, d1, sel[0], low);
+  mux_2_1 highmux(d2, d3, sel[0], high);
+  mux_2_1 finalmux(low, high, sel[1], y);
 
   // Implement mux_4_1 using three instances of mux_2_1
 

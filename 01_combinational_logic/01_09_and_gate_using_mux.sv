@@ -19,6 +19,7 @@ module and_gate_using_mux
 );
 
   // TODO
+  mux iand(1'b0, b, a, o);
 
   // Implement and gate using instance(s) of mux,
   // constants 0 and 1, and wire connections
