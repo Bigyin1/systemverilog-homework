@@ -12,8 +12,8 @@ module formula_1_pipe
     input  [31:0] b,
     input  [31:0] c,
 
-    output        res_vld,
-    output [31:0] res
+    output logic        res_vld,
+    output logic [31:0] res
 );
     // Task:
     //
@@ -40,6 +40,64 @@ module formula_1_pipe
     // in the article by Yuri Panchul published in
     // FPGA-Systems Magazine :: FSM :: Issue ALFA (state_0)
     // You can download this issue from https://fpga-systems.ru/fsm
+
+    logic [15:0] data_a;
+    logic [15:0] data_b;
+    logic [15:0] data_c;
+
+
+    logic data_valid_a;
+    logic data_valid_b;
+    logic data_valid_c;
+
+    // valid
+
+    always_ff @ (posedge clk or posedge rst)
+        if (rst) begin
+            res_vld <= '0;
+        end
+        else begin
+            res_vld <=  data_valid_a &
+                        data_valid_b &
+                        data_valid_c;
+        end
+
+    // data
+    always_ff @ (posedge clk)
+        if (data_valid_a & data_valid_b & data_valid_c)
+            res <= data_a + data_b + data_c;
+
+
+
+    isqrt i_isqrt_1
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( arg_vld   ),
+        .x     ( a         ),
+        .y_vld ( data_valid_a ),
+        .y     ( data_a)
+    );
+
+    isqrt i_isqrt_2
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( arg_vld   ),
+        .x     ( b         ),
+        .y_vld ( data_valid_b ),
+        .y     ( data_b)
+    );
+
+    isqrt i_isqrt_3
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( arg_vld   ),
+        .x     ( c         ),
+        .y_vld ( data_valid_c ),
+        .y     ( data_c)
+    );
 
 
 endmodule
