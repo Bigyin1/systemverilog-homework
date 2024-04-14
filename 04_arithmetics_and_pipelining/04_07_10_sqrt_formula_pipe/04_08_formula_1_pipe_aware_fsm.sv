@@ -124,8 +124,11 @@ module formula_1_pipe_aware_fsm
         if (computedArgs == 3)
             computedArgs <= '0;
 
-        if (isqrt_y_vld && computedArgs != 3)
+        else if (isqrt_y_vld)
             computedArgs <= computedArgs + 2'b1;  
+
+
+        // if (isqrt_y_vld && computedArgs != 3)
     end
 
 
