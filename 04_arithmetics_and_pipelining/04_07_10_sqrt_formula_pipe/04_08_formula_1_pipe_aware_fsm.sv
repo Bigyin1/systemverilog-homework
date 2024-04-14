@@ -60,5 +60,92 @@ module formula_1_pipe_aware_fsm
     // FPGA-Systems Magazine :: FSM :: Issue ALFA (state_0)
     // You can download this issue from https://fpga-systems.ru/fsm
 
+    // States
+  enum logic[1:0]
+  {
+     st_load_a = 2'd0,
+     st_load_b = 2'd1,
+     st_load_c = 2'd2
+  }
+  state, new_state;
+
+  // State transition logic
+  always_comb
+  begin
+    new_state = state;
+
+    case (state)
+
+      st_load_a : if(arg_vld) new_state = st_load_b;
+      st_load_b : new_state = st_load_c;
+      st_load_c : new_state = st_load_a;
+      
+    endcase
+  end
+
+  // State update
+  always_ff @ (posedge clk)
+    if (rst)
+      state <= st_load_a;
+    else
+      state <= new_state;
+
+    
+    // Data path
+
+    always_comb
+    begin
+
+    isqrt_x = 'x;
+
+    case (state)
+        st_load_a :
+        begin
+            if (arg_vld) 
+            begin
+                isqrt_x = a;   
+                isqrt_x_vld = '1;  
+            end else
+                isqrt_x_vld = '0;
+        end
+        
+        st_load_b : isqrt_x = b;
+        st_load_c : isqrt_x = c;
+      
+    endcase    
+    end
+
+    logic [1:0] computedArgs; 
+
+    always_ff @( posedge clk ) begin
+        if (rst)
+            computedArgs <= '0;
+
+        if (computedArgs == 3)
+            computedArgs <= '0;
+
+        if (isqrt_y_vld && computedArgs != 3)
+            computedArgs <= computedArgs + 2'b1;  
+    end
+
+
+    always_ff @( posedge clk ) begin
+        if (rst)
+            res <= '0;
+
+        if (isqrt_y_vld)
+            if (computedArgs != 3)
+                res <= res + isqrt_y;
+            else
+                res <= isqrt_y;
+        else
+            res <= '0;
+
+    end
+
+
+    assign res_vld = computedArgs == 3;  
+
+
 
 endmodule

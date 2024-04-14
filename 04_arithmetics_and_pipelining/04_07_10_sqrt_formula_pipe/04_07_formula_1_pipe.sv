@@ -50,24 +50,25 @@ module formula_1_pipe
     logic data_valid_b;
     logic data_valid_c;
 
-    // valid
 
-    always_ff @ (posedge clk or posedge rst)
-        if (rst) begin
-            res_vld <= '0;
-        end
-        else begin
-            res_vld <=  data_valid_a &
+    // always_ff @ (posedge clk or posedge rst)
+    //     if (rst)
+    //         res_vld <= '0;
+    //     else 
+    //         res_vld <=  data_valid_a &
+    //                     data_valid_b &
+    //                     data_valid_c;
+
+
+    assign res_vld = data_valid_a &
                         data_valid_b &
                         data_valid_c;
-        end
-
     // data
-    always_ff @ (posedge clk)
-        if (data_valid_a & data_valid_b & data_valid_c)
-            res <= data_a + data_b + data_c;
+    // always_ff @ (posedge clk)
+    //     if (data_valid_a & data_valid_b & data_valid_c)
+    //         res <= data_a + data_b + data_c;
 
-
+    assign res = data_a + data_b + data_c;
 
     isqrt i_isqrt_1
     (
