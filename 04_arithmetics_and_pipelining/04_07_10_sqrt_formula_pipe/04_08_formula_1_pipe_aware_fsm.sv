@@ -93,8 +93,7 @@ module formula_1_pipe_aware_fsm
     
     // Data path
 
-    always_comb
-    begin
+    always_comb begin
 
     isqrt_x = 'x;
 
@@ -120,6 +119,7 @@ module formula_1_pipe_aware_fsm
     always_ff @( posedge clk ) begin
         if (rst)
             computedArgs <= '0;
+        else
 
         if (computedArgs == 3)
             computedArgs <= '0;
@@ -135,6 +135,7 @@ module formula_1_pipe_aware_fsm
     always_ff @( posedge clk ) begin
         if (rst)
             res <= '0;
+        else
 
         if (isqrt_y_vld)
             if (computedArgs != 3)
