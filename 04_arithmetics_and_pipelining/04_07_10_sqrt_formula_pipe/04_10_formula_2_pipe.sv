@@ -42,4 +42,88 @@ module formula_2_pipe
     // You can download this issue from https://fpga-systems.ru/fsm
 
 
+    logic [31:0] bDelayed;
+    logic        bDelayedValid;
+
+    logic [31:0] aDelayed;
+    logic        aDelayedValid;
+
+    logic [15:0] cSqrt;
+    logic        cSqrtValid;
+
+    logic [15:0] sum1Sqrt;
+    logic        sum1SqrtValid;
+
+    logic [15:0] sum2Sqrt;
+    logic        sum2SqrtValid;
+
+
+    logic [31:0] sum1;
+    logic [31:0] sum2;
+
+    assign sum1 = cSqrt + bDelayed;
+    assign sum2 = sum1Sqrt + aDelayed;
+
+    assign res = sum2Sqrt;
+    assign res_vld = sum2SqrtValid;
+
+
+
+
+    shift_register_with_valid #(32, 4) shiftReg1
+    (
+        .clk(clk),
+        .rst(rst),
+        .in_vld(arg_vld),
+        .in_data(b),
+
+        .out_vld(bDelayedValid),
+        .out_data(bDelayed)
+    );
+
+
+    shift_register_with_valid #(32, 8) shiftReg2
+    (
+        .clk(clk),
+        .rst(rst),
+        .in_vld(arg_vld),
+        .in_data(a),
+
+        .out_vld(aDelayedValid),
+        .out_data(aDelayed)
+    );
+
+
+    isqrt #(.n_pipe_stages(4)) i_isqrt_1
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( arg_vld   ),
+        .x     ( c         ),
+        .y_vld ( cSqrtValid ),
+        .y     ( cSqrt)
+    );
+
+    isqrt #(.n_pipe_stages(4)) i_isqrt_2
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( bDelayedValid ),
+        .x     ( sum1         ),
+        .y_vld ( sum1SqrtValid ),
+        .y     ( sum1Sqrt)
+    );
+
+    isqrt #(.n_pipe_stages(4)) i_isqrt_3
+    (
+        .clk   ( clk       ),
+        .rst   ( rst       ),
+        .x_vld ( aDelayedValid ),
+        .x     ( sum2      ),
+        .y_vld ( sum2SqrtValid ),
+        .y     ( sum2Sqrt)
+    );
+
+
+
 endmodule
